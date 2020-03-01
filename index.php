@@ -1,0 +1,134 @@
+<?php
+session_start();
+
+if(!isset($_SESSION['user_name'])){
+    $_SESSION['message_auth'] = 'Чтобы оставить комментарий';
+}
+else{
+    header("location:/index_authorized.php");
+}
+
+
+require_once 'app/include/database.php';
+require_once 'app/include/functions.php';
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <?php require_once 'app/include/database.php' ?>
+    <?php require_once 'app/include/functions.php' ?>
+
+    <?php
+
+   //echo '<pre>';
+   //print_r($coments);
+   //echo '</pre>';
+
+    ?>
+
+    <title>Comments</title>
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+
+    <!-- Styles -->
+    <link href="css/app.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="index.php">
+                    Project
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav mr-auto">
+
+                    </ul>
+
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Authentication Links -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="login.php">Login</a>
+                                <?php
+                                     //echo $_SESSION['user_name'];
+                                ?>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="register.php">Register</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main class="py-4">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header"><h3>Комментарии</h3></div>
+
+                            <div class="card-body">
+                              <div class="alert alert-success" role="alert">
+                                  <?php
+                                       echo $_SESSION['notice_coment'];
+                                  ?>
+                              </div>
+
+                                <!----------------------------------------------- Начало коментариев ---------------------------------------------------------->
+
+                    <?php
+                          $coments = get_coments($link);
+
+                    ?>
+
+				    <?php foreach ($coments as $coment): ?>
+
+                                <div class="media">
+                                  <img src="<?php echo 'img/'. basename($coment['image'])?>" class="mr-3" alt="..." width="64" height="64">
+                                  <div class="media-body">
+                                    <h5 class="mt-0">
+                                                 <?php  echo $coment['name'] ?>
+                                    </h5>
+                                    <span><small><?php echo date('d/m/Y H:i', strtotime($coment['date']))?></small></span>
+                                    <p>
+                                                 <?php  echo $coment['coment'] ?>
+                                    </p>
+                                  </div>
+                                </div>
+                    <?php endforeach; ?>
+
+                                <!----------------------------------------------- Конец коментариев ---------------------------------------------------------->
+
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-12" style="margin-top: 20px;">
+                        <div class="alert alert-auth" role="">
+                            <?php
+                            echo $_SESSION['message_auth']; ?> <a href="login.php"> авторизуйтесь</a>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
